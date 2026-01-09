@@ -1,0 +1,39 @@
+# Node modules
+node_modules/
+bun.lockb
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Build outputs
+dist/
+build/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+*.test.ts
+coverage/
+
+# History exports
+history_*.json
+agent_history.json
+
+# Temp files
+tmp/
+temp/
+
+# Prüfung/Homework docs
+Prüfungs.md
