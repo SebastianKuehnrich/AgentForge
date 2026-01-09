@@ -7,11 +7,13 @@ bun.lock
 .env
 .env.local
 .env.production
+.env.*.local
 
 # Build outputs
 dist/
 build/
 *.log
+*.tsbuildinfo
 
 # IDE
 .vscode/
@@ -19,22 +21,33 @@ build/
 *.swp
 *.swo
 *~
+.DS_Store
 
 # OS
-.DS_Store
 Thumbs.db
+desktop.ini
 
 # Test files
 *.test.ts
+*.spec.ts
 coverage/
+.nyc_output/
 
 # History exports
 history_*.json
 agent_history.json
+*_history.json
 
 # Temp files
 tmp/
 temp/
+*.tmp
 
-# Prüfung/Homework docs
+# Documentation (Homework)
 Prüfungs.md
+PROJECT_DOCUMENTATION.md
+README_DEPLOYMENT.md
+
+# Backup files
+*.backup
+*_BACKUP_*

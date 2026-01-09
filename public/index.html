@@ -1,10 +1,372 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Multi-Tool Agent - Chat Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Inline Tailwind Config */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
-<body>
-$END$
+<body class="bg-gray-50 min-h-screen">
+<!-- Header -->
+<header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+    <div class="container mx-auto px-4 py-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold">AI Multi-Tool Agent</h1>
+                    <p class="text-blue-100 text-sm">11 Tools • Real-time Processing</p>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="hidden md:flex items-center space-x-6">
+                <div class="text-center">
+                    <div class="text-2xl font-bold" id="message-count">0</div>
+                    <div class="text-xs text-blue-100">Messages</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold" id="cost-display">$0.00</div>
+                    <div class="text-xs text-blue-100">Total Cost</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Container -->
+<div class="container mx-auto px-4 py-6 max-w-6xl">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Sidebar - Tools Info -->
+        <aside class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-lg p-6 sticky top-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                    </svg>
+                    Available Tools
+                </h2>
+
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-center space-x-2 p-2 bg-blue-50 rounded-lg">
+                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        <span class="text-gray-700">Calculator</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-2 bg-blue-50 rounded-lg">
+                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        <span class="text-gray-700">Current Time</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-2 bg-blue-50 rounded-lg">
+                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        <span class="text-gray-700">Weather API</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-2 bg-blue-50 rounded-lg">
+                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        <span class="text-gray-700">VAT Calculator</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-2 bg-blue-50 rounded-lg">
+                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        <span class="text-gray-700">JSON Validator</span>
+                    </div>
+                    <div class="text-center pt-2 text-xs text-gray-500">
+                        +6 more tools
+                    </div>
+                </div>
+
+                <!-- Example Queries -->
+                <div class="mt-6">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Try asking:</h3>
+                    <div class="space-y-2 text-xs">
+                        <button onclick="fillQuery('Wie ist das Wetter in Berlin?')" class="w-full text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                            "Wie ist das Wetter in Berlin?"
+                        </button>
+                        <button onclick="fillQuery('Berechne 25 * 4')" class="w-full text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                            "Berechne 25 * 4"
+                        </button>
+                        <button onclick="fillQuery('Generiere ein Passwort mit 16 Zeichen')" class="w-full text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                            "Generiere ein Passwort"
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Chat Area -->
+        <main class="lg:col-span-3">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" style="height: calc(100vh - 200px);">
+
+                <!-- Chat Messages -->
+                <div id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <!-- Welcome Message -->
+                    <div class="text-center py-12">
+                        <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome to AI Multi-Tool Agent</h2>
+                        <p class="text-gray-600 max-w-md mx-auto">
+                            I'm an AI agent with 11 integrated tools. Ask me anything about weather, calculations, time, or use my other tools!
+                        </p>
+                        <div class="mt-6 flex flex-wrap justify-center gap-2">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">Weather API</span>
+                            <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">VAT Calculator</span>
+                            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">JSON Validator</span>
+                            <span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">+8 more</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="border-t border-gray-200 bg-gray-50 p-4">
+                    <form id="chat-form" class="flex space-x-3">
+                        <input
+                                type="text"
+                                id="user-input"
+                                placeholder="Type your message..."
+                                class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                autocomplete="off"
+                        >
+                        <button
+                                type="submit"
+                                id="send-button"
+                                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                        >
+                            <span>Send</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <!-- Status Bar -->
+                    <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center space-x-1">
+                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                <span>Ready</span>
+                            </div>
+                            <div>
+                                <span id="token-count">0 tokens used</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Powered by OpenAI GPT-4o-mini</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    const chatContainer = document.getElementById('chat-container');
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+    const messageCountEl = document.getElementById('message-count');
+    const costDisplayEl = document.getElementById('cost-display');
+    const tokenCountEl = document.getElementById('token-count');
+
+    let messageCount = 0;
+    let totalCost = 0;
+    let totalTokens = 0;
+
+    // Auto-scroll to bottom
+    function scrollToBottom() {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // Add user message
+    function addUserMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex justify-end';
+        messageDiv.innerHTML = `
+                <div class="max-w-xl">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-lg">
+                        <p class="text-sm">${escapeHtml(message)}</p>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1 text-right">Just now</div>
+                </div>
+            `;
+        chatContainer.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // Add assistant message
+    function addAssistantMessage(message, toolsUsed = [], cost = 0, tokens = 0) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex justify-start';
+
+        let toolBadges = '';
+        if (toolsUsed && toolsUsed.length > 0) {
+            toolBadges = `
+                    <div class="flex flex-wrap gap-1 mt-2">
+                        ${toolsUsed.map(tool => `
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                ${tool}
+                            </span>
+                        `).join('')}
+                    </div>
+                `;
+        }
+
+        messageDiv.innerHTML = `
+                <div class="max-w-xl">
+                    <div class="flex items-start space-x-2">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 shadow">
+                                <p class="text-sm text-gray-800 whitespace-pre-wrap">${escapeHtml(message)}</p>
+                                ${toolBadges}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1 flex items-center space-x-3">
+                                <span>Just now</span>
+                                ${cost > 0 ? `<span class="text-green-600">$${cost.toFixed(6)}</span>` : ''}
+                                ${tokens > 0 ? `<span>${tokens} tokens</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        chatContainer.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // Add typing indicator
+    function addTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typing-indicator';
+        typingDiv.className = 'flex justify-start';
+        typingDiv.innerHTML = `
+                <div class="flex items-start space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <div class="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3">
+                        <div class="flex space-x-2">
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        chatContainer.appendChild(typingDiv);
+        scrollToBottom();
+    }
+
+    // Remove typing indicator
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+
+    // Escape HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Update stats
+    function updateStats(cost, tokens) {
+        totalCost += cost;
+        totalTokens += tokens;
+        costDisplayEl.textContent = `$${totalCost.toFixed(4)}`;
+        tokenCountEl.textContent = `${totalTokens} tokens used`;
+    }
+
+    // Fill query from example
+    function fillQuery(query) {
+        userInput.value = query;
+        userInput.focus();
+    }
+
+    // Handle form submit
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Update UI
+        addUserMessage(message);
+        userInput.value = '';
+        sendButton.disabled = true;
+        addTypingIndicator();
+        messageCount++;
+        messageCountEl.textContent = messageCount;
+
+        try {
+            // Send to API
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message })
+            });
+
+            const data = await response.json();
+
+            removeTypingIndicator();
+
+            if (data.error) {
+                addAssistantMessage(`Error: ${data.error}`, [], 0, 0);
+            } else {
+                addAssistantMessage(
+                    data.response,
+                    data.toolsUsed || [],
+                    data.cost || 0,
+                    data.tokens || 0
+                );
+                updateStats(data.cost || 0, data.tokens || 0);
+            }
+
+        } catch (error) {
+            removeTypingIndicator();
+            addAssistantMessage(`Error: ${error.message}`, [], 0, 0);
+        } finally {
+            sendButton.disabled = false;
+            userInput.focus();
+        }
+    });
+
+    // Focus input on load
+    userInput.focus();
+
+    // Make fillQuery global
+    window.fillQuery = fillQuery;
+</script>
 </body>
 </html>
